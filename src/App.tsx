@@ -31,8 +31,11 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/new" element={<ProductForm />} />
+          <Route path="/system" element={<TraditionalPDV />} />
           <Route path="/sales" element={<Sales />} />
           <Route path="/sales/new" element={<NewSale />} />
+          <Route path="/customers" element={<Customers />} />
+          <Route path="/reports" element={<Reports />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
