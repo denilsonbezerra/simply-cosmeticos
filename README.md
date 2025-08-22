@@ -67,7 +67,7 @@ Abaixo, os principais usados no sistema:
 
 ```bash
 # Clonar o repositório
-git clone https://github.com/seu-usuario/simply-cosmeticos.git
+https://github.com/denilsonbezerra/simply-cosmeticos.git
 
 # Entrar na pasta
 cd simply-cosmeticos
