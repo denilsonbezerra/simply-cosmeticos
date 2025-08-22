@@ -9,45 +9,45 @@ import { ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const { toast } = useToast()
+  const navigate = useNavigate()
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
-      });
+      })
 
       if (error) {
         toast({
           title: "Erro no login",
           description: error.message,
           variant: "destructive",
-        });
+        })
       } else {
         toast({
           title: "Login realizado com sucesso!",
           description: "Redirecionando para o dashboard...",
-        });
-        navigate("/dashboard");
+        })
+        navigate("/dashboard")
       }
     } catch (error) {
       toast({
         title: "Erro inesperado",
         description: "Tente novamente mais tarde.",
         variant: "destructive",
-      });
+      })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-accent flex items-center justify-center p-4">
@@ -104,7 +104,7 @@ const Login = () => {
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}
 
 export default Login;

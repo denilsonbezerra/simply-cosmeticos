@@ -24,53 +24,54 @@ const Dashboard = () => {
     totalCustomers: 0,
     lowStockProducts: 0,
     totalProfit: 0,
-  });
-  const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  })
+
+  const [loading, setLoading] = useState(true)
+  const { toast } = useToast()
+  const navigate = useNavigate()
 
   useEffect(() => {
-    checkAuth();
-    loadDashboardData();
-  }, []);
+    checkAuth()
+    loadDashboardData()
+  }, [])
 
   const checkAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabase.auth.getSession()
     if (!session) {
-      navigate("/login");
+      navigate("/login")
     }
-  };
+  }
 
   const loadDashboardData = async () => {
     try {
       // Get total sales and profit
       const { data: salesData } = await supabase
         .from("sales")
-        .select("total_amount, profit, created_at");
+        .select("total_amount, profit, created_at")
 
       // Get today's sales
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().split('T')[0]
       const todaySalesData = salesData?.filter(sale =>
         sale.created_at.startsWith(today)
-      ) || [];
+      ) || []
 
       // Get products count and low stock
       const { data: productsData } = await supabase
         .from("products")
         .select("stock_quantity, min_stock_level")
-        .eq("active", true);
+        .eq("active", true)
 
       // Get customers count
       const { data: customersData } = await supabase
         .from("customers")
-        .select("id");
+        .select("id")
 
-      const totalSales = salesData?.reduce((sum, sale) => sum + Number(sale.total_amount), 0) || 0;
-      const todaySales = todaySalesData.reduce((sum, sale) => sum + Number(sale.total_amount), 0);
-      const totalProfit = salesData?.reduce((sum, sale) => sum + Number(sale.profit), 0) || 0;
+      const totalSales = salesData?.reduce((sum, sale) => sum + Number(sale.total_amount), 0) || 0
+      const todaySales = todaySalesData.reduce((sum, sale) => sum + Number(sale.total_amount), 0)
+      const totalProfit = salesData?.reduce((sum, sale) => sum + Number(sale.profit), 0) || 0
       const lowStockProducts = productsData?.filter(product =>
         product.stock_quantity <= product.min_stock_level
-      ).length || 0;
+      ).length || 0
 
       setStats({
         totalSales,
@@ -79,17 +80,17 @@ const Dashboard = () => {
         totalCustomers: customersData?.length || 0,
         lowStockProducts,
         totalProfit,
-      });
+      })
     } catch (error) {
       toast({
         title: "Erro ao carregar dados",
         description: "Não foi possível carregar os dados do dashboard.",
         variant: "destructive",
-      });
+      })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   if (loading) {
     return (
@@ -102,7 +103,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -257,7 +258,7 @@ const Dashboard = () => {
         </div>
       </main>
     </div>
-  );
-};
+  )
+}
 
 export default Dashboard;

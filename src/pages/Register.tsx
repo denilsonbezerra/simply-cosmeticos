@@ -9,17 +9,17 @@ import { ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"vendedor" | "admin">("vendedor"); // Tipo de conta
-  const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const [fullName, setFullName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [role, setRole] = useState<"vendedor" | "admin">("vendedor") // Tipo de conta
+  const [loading, setLoading] = useState(false)
+  const { toast } = useToast()
+  const navigate = useNavigate()
 
   const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
 
     try {
       // Cadastro no Supabase Auth com metadata para trigger
@@ -32,33 +32,33 @@ const Register = () => {
             role,
           },
         },
-      });
+      })
 
       if (error) {
         toast({
           title: "Erro no cadastro",
           description: error.message,
           variant: "destructive",
-        });
-        return;
+        })
+        return
       }
 
       toast({
         title: "Cadastro realizado com sucesso!",
         description: "Agora você pode acessar o sistema.",
-      });
+      })
 
-      navigate("/dashboard"); // ou para login se preferir
+      navigate("/dashboard") // ou para login se preferir
     } catch (err) {
       toast({
         title: "Erro inesperado",
         description: "Tente novamente mais tarde.",
         variant: "destructive",
-      });
+      })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-accent flex items-center justify-center p-4">
@@ -138,7 +138,7 @@ const Register = () => {
         </CardContent>
       </Card>
     </div>
-  );
-};
+  )
+}
 
 export default Register;

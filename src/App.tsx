@@ -16,7 +16,7 @@ import TraditionalPDV from "./pages/TraditionalPDV";
 import NotFound from "./pages/NotFound";
 import Register from "./pages/Register";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -29,10 +29,15 @@ const App = () => (
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/products/new" element={<ProductForm />} />
+          <Route path="/sales" element={<Sales />} />
+          <Route path="/sales/new" element={<NewSale />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+)
 
-export default App;
+export default App

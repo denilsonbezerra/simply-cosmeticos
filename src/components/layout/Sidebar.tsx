@@ -18,10 +18,10 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 const Sidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [collapsed, setCollapsed] = useState(false)
+  const { toast } = useToast()
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
@@ -30,24 +30,24 @@ const Sidebar = () => {
     { icon: Package, label: "Produtos", path: "/products" },
     { icon: Users, label: "Clientes", path: "/customers" },
     { icon: BarChart3, label: "Relatórios", path: "/reports" },
-  ];
+  ]
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      await supabase.auth.signOut()
       toast({
         title: "Logout realizado",
         description: "Você foi desconectado com sucesso.",
-      });
-      navigate("/login");
+      })
+      navigate("/login")
     } catch (error) {
       toast({
         title: "Erro no logout",
         description: "Não foi possível fazer logout.",
         variant: "destructive",
-      });
+      })
     }
-  };
+  }
 
   return (
     <div className={cn(
@@ -84,8 +84,8 @@ const Sidebar = () => {
       {/* Menu Items */}
       <nav className="flex flex-1 flex-col p-4 space-y-2">
         {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = location.pathname.startsWith(item.path);
+          const Icon = item.icon
+          const isActive = location.pathname.startsWith(item.path)
           
           return (
             <Link key={item.path} to={item.path}>
@@ -101,7 +101,7 @@ const Sidebar = () => {
                 {!collapsed && <span>{item.label}</span>}
               </Button>
             </Link>
-          );
+          )
         })}
       </nav>
 
@@ -120,7 +120,7 @@ const Sidebar = () => {
         </Button>
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default Sidebar;
