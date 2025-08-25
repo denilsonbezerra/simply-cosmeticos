@@ -28,7 +28,6 @@ const Sidebar = () => {
     { icon: Monitor, label: "Sistema de Vendas", path: "/system" },
     { icon: ShoppingCart, label: "Vendas", path: "/sales" },
     { icon: Package, label: "Produtos", path: "/products" },
-    { icon: Users, label: "Clientes", path: "/customers" },
     { icon: BarChart3, label: "Relatórios", path: "/reports" },
   ]
 
@@ -74,7 +73,7 @@ const Sidebar = () => {
             variant="ghost"
             size="sm"
             onClick={() => setCollapsed(!collapsed)}
-            className="hover:bg-secondary"
+            className="hover:bg-accent"
           >
             {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </Button>

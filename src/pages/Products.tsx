@@ -221,7 +221,7 @@ const Products = () => {
                           variant="outline" 
                           size="sm" 
                           className="w-full hover:shadow-soft transition-all"
-                          onClick={() => navigate(`/products/${product.id}/edit`)}
+                          onClick={() => navigate(`/products/${product.id}`)}
                         >
                           <Edit className="h-3 w-3 mr-1" />
                           Editar

@@ -37,10 +37,6 @@ interface Sale {
   payment_method: string;
   notes?: string;
   created_at: string;
-  customer_id?: number;
-  customers?: {
-    name: string;
-  };
   sale_items: Array<{
     quantity: number;
     unit_price: number;
@@ -92,7 +88,6 @@ const Sales = () => {
         .from("sales")
         .select(`
           *,
-          customers (name),
           sale_items (
             quantity,
             unit_price,
@@ -163,8 +158,7 @@ const Sales = () => {
   }
 
   const filteredSales = sales.filter(sale => {
-    const matchesSearch = sale.customers?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sale.id
+    const matchesSearch = sale.id
 
     const matchesPayment = paymentFilter === "all" || sale.payment_method === paymentFilter
 
@@ -271,7 +265,6 @@ const Sales = () => {
           <h2>SIMPLY COSMÉTICOS</h2>
           <p><strong>Data:</strong> ${formatDate(sale.created_at)}</p>
           <p><strong>Forma de Pagamento:</strong> ${getPaymentMethodName(sale.payment_method)}</p>
-          ${sale.customers?.name ? `<p><strong>Cliente:</strong> ${sale.customers.name}</p>` : ''}
 
           <div class="items">
             ${sale.sale_items.map(item => `
@@ -391,12 +384,10 @@ const Sales = () => {
       // Cabeçalho da venda
       doc.setFontSize(11)
       doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
-      doc.text(`${sale.sale_number}`, 25, yPos + 3)
+      doc.text(`${sale.id}`, 25, yPos + 3)
       
       doc.setFontSize(9)
       doc.setTextColor(textColor[0], textColor[1], textColor[2])
-      const customerName = sale.customers?.name || 'Cliente não identificado'
-      doc.text(customerName.length > 20 ? customerName.substring(0, 20) + '...' : customerName, 65, yPos + 3)
       doc.text(new Date(sale.created_at).toLocaleDateString('pt-BR'), 120, yPos + 3)
       doc.text(`Total: ${formatCurrency(sale.total_amount)}`, 150, yPos + 3)
       
@@ -562,7 +553,7 @@ const Sales = () => {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                   <Input
-                    placeholder="Buscar por cliente ou ID da venda..."
+                    placeholder="Buscar por ID da venda..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -631,10 +622,7 @@ const Sales = () => {
                               <ShoppingCart className="h-5 w-5 text-primary" />
                             </div>
                             <div>
-                              <h3 className="font-semibold">Venda {sale.sale_number}</h3>
-                              <p className="text-sm text-muted-foreground">
-                                {sale.customers?.name || "Cliente não identificado"}
-                              </p>
+                              <h3 className="font-semibold">Venda #{sale.id.toString().padStart(6, "0")}</h3>
                             </div>
                           </div>
 
@@ -734,7 +722,6 @@ const Sales = () => {
               <h2 className="text-xl font-bold mb-4">Detalhes da Venda #{selectedSale.id}</h2>
 
               <div className="space-y-2">
-                <p><strong>Cliente:</strong> {selectedSale.customers?.name || "Não identificado"}</p>
                 <p><strong>Data:</strong> {formatDate(selectedSale.created_at)}</p>
                 <p><strong>Forma de Pagamento:</strong> {selectedSale.payment_method.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
                 <p><strong>Total:</strong> {formatCurrency(selectedSale.total_amount)}</p>

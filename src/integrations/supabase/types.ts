@@ -38,48 +38,6 @@ export type Database = {
         }
         Relationships: []
       }
-      customers: {
-        Row: {
-          address: string | null
-          birth_date: string | null
-          cpf: string | null
-          created_at: string
-          created_by: string | null
-          email: string | null
-          id: number
-          name: string
-          notes: string | null
-          phone: string | null
-          updated_at: string
-        }
-        Insert: {
-          address?: string | null
-          birth_date?: string | null
-          cpf?: string | null
-          created_at?: string
-          created_by?: string | null
-          email?: string | null
-          id?: number
-          name: string
-          notes?: string | null
-          phone?: string | null
-          updated_at?: string
-        }
-        Update: {
-          address?: string | null
-          birth_date?: string | null
-          cpf?: string | null
-          created_at?: string
-          created_by?: string | null
-          email?: string | null
-          id?: number
-          name?: string
-          notes?: string | null
-          phone?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
       products: {
         Row: {
           active: boolean
@@ -220,7 +178,6 @@ export type Database = {
       sales: {
         Row: {
           created_at: string
-          customer_id: number | null
           id: number
           notes: string | null
           payment_method: string
@@ -232,7 +189,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          customer_id?: number | null
           id?: number
           notes?: string | null
           payment_method?: string
@@ -244,7 +200,6 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          customer_id?: number | null
           id?: number
           notes?: string | null
           payment_method?: string
@@ -254,15 +209,7 @@ export type Database = {
           total_amount?: number
           total_cost?: number
         }
-        Relationships: [
-          {
-            foreignKeyName: "sales_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "customers"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {

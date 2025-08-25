@@ -5,11 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Search, 
-  Plus, 
-  Minus, 
-  ShoppingCart, 
+import {
+  Search,
+  Plus,
+  Minus,
+  ShoppingCart,
   Package,
   Check
 } from "lucide-react";
@@ -34,13 +34,6 @@ interface Product {
   image_url?: string;
 }
 
-interface Customer {
-  id: number;
-  name: string;
-  email?: string;
-  phone?: string;
-}
-
 interface CartItem {
   product: Product;
   quantity: number;
@@ -48,9 +41,7 @@ interface CartItem {
 
 const NewSale = () => {
   const [products, setProducts] = useState<Product[]>([])
-  const [customers, setCustomers] = useState<Customer[]>([])
   const [cart, setCart] = useState<CartItem[]>([])
-  const [selectedCustomer, setSelectedCustomer] = useState<number>()
   const [paymentMethod, setPaymentMethod] = useState<string>("dinheiro")
   const [notes, setNotes] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
@@ -73,24 +64,18 @@ const NewSale = () => {
 
   const loadData = async () => {
     try {
-      const [productsResult, customersResult] = await Promise.all([
+      const [productsResult] = await Promise.all([
         supabase
           .from("products")
           .select("*")
           .eq("active", true)
           .gt("stock_quantity", 0)
-          .order("name"),
-        supabase
-          .from("customers")
-          .select("id, name, email, phone")
           .order("name")
       ])
 
       if (productsResult.error) throw productsResult.error
-      if (customersResult.error) throw customersResult.error
 
       setProducts(productsResult.data || [])
-      setCustomers(customersResult.data || [])
     } catch (error) {
       toast({
         title: "Erro ao carregar dados",
@@ -104,7 +89,7 @@ const NewSale = () => {
 
   const addToCart = (product: Product) => {
     const existingItem = cart.find(item => item.product.id === product.id)
-    
+
     if (existingItem) {
       if (existingItem.quantity < product.stock_quantity) {
         setCart(cart.map(item =>
@@ -150,7 +135,7 @@ const NewSale = () => {
   }
 
   const getCartProfit = () => {
-    return cart.reduce((profit, item) => 
+    return cart.reduce((profit, item) =>
       profit + ((item.product.price - item.product.cost) * item.quantity), 0
     )
   }
@@ -170,7 +155,7 @@ const NewSale = () => {
     }
 
     setSaving(true)
-    
+
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error("Usuário não autenticado")
@@ -188,7 +173,6 @@ const NewSale = () => {
           profit: profit,
           payment_method: paymentMethod,
           notes: notes || null,
-          customer_id: selectedCustomer || null,
           sold_by: user.id
         }])
         .select()
@@ -270,7 +254,7 @@ const NewSale = () => {
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
-      
+
       <main className="flex-1 p-6 overflow-auto">
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
@@ -282,7 +266,7 @@ const NewSale = () => {
                 Selecione produtos e finalize a venda
               </p>
             </div>
-            <Button 
+            <Button
               variant="outline"
               onClick={() => navigate("/sales")}
             >
@@ -316,8 +300,8 @@ const NewSale = () => {
                       <div className="flex items-center space-x-4">
                         <div className="w-16 h-16 bg-secondary rounded-lg flex items-center justify-center">
                           {product.image_url ? (
-                            <img 
-                              src={product.image_url} 
+                            <img
+                              src={product.image_url}
                               alt={product.name}
                               className="w-full h-full object-cover rounded-lg"
                             />
@@ -325,7 +309,7 @@ const NewSale = () => {
                             <Package className="h-8 w-8 text-muted-foreground" />
                           )}
                         </div>
-                        
+
                         <div className="flex-1">
                           <h3 className="font-semibold">{product.name}</h3>
                           <p className="text-lg font-bold text-success">
@@ -342,7 +326,7 @@ const NewSale = () => {
                             )}
                           </div>
                         </div>
-                        
+
                         <Button
                           size="sm"
                           className="bg-accent hover:bg-accent/90 text-accent-foreground"
@@ -384,7 +368,7 @@ const NewSale = () => {
                             {formatCurrency(item.product.price)}
                           </p>
                         </div>
-                        
+
                         <div className="flex items-center space-x-2">
                           <Button
                             size="sm"
@@ -414,24 +398,6 @@ const NewSale = () => {
                   <CardTitle>Detalhes da Venda</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Customer */}
-                  <div>
-                    <Label htmlFor="customer">Cliente (opcional)</Label>
-                    <Select value={selectedCustomer.toString()} onValueChange={(value) => setSelectedCustomer(parseInt(value))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecionar cliente" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Selecionar cliente">{selectedCustomer}</SelectItem>
-                        {customers.map((customer) => (
-                          <SelectItem key={customer.id} value={customer.id.toLocaleString()}>
-                            {customer.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
                   {/* Payment Method */}
                   <div>
                     <Label htmlFor="payment">Forma de Pagamento</Label>
