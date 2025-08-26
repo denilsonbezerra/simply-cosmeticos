@@ -22,7 +22,7 @@ O sistema foi projetado para pequenas empresas, oferecendo controle de vendas, e
   - Atualização automática após cada venda.
 
 - 👥 **Gestão de Usuários**
-  - Diferentes níveis de acesso (ex.: operador de caixa, administrador).
+  - Diferentes níveis de acesso (ex.: vendedor, administrador).
   - Registro automático no `profiles` após criação no Auth.
 
 ---
@@ -86,14 +86,6 @@ Após conectar o repositório, basta configurar as variáveis de ambiente:
 
 - `VITE_SUPABASE_URL` → URL do Supabase  
 - `VITE_SUPABASE_ANON_KEY` → Chave pública do Supabase  
-
----
-
-## 📌 Próximos Passos
-
-- Implementar relatórios de vendas.  
-- Criar módulo de cadastro de clientes.  
-- Dashboard administrativo.  
 
 ---
 
