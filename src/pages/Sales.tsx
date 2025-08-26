@@ -688,7 +688,7 @@ const Sales = () => {
                             <AlertDialogHeader>
                               <AlertDialogTitle>Tem certeza que deseja excluir?</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Esta ação não pode ser desfeita. A venda {sale.sale_number} será permanentemente excluída do sistema.
+                                Esta ação não pode ser desfeita. A venda #{sale.sale_number} será permanentemente excluída do sistema.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -721,7 +721,7 @@ const Sales = () => {
                 ✕
               </button>
 
-              <h2 className="text-xl font-bold mb-4">Detalhes da Venda {selectedSale.sale_number}</h2>
+              <h2 className="text-xl font-bold mb-4">Detalhes da Venda #{selectedSale.sale_number}</h2>
 
               <div className="space-y-2">
                 <p><strong>Data:</strong> {formatDate(selectedSale.created_at)}</p>
