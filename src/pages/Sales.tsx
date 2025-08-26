@@ -624,7 +624,7 @@ const Sales = () => {
                               <ShoppingCart className="h-5 w-5 text-primary" />
                             </div>
                             <div>
-                              <h3 className="font-semibold">Venda {sale.sale_number}</h3>
+                              <h3 className="font-semibold">Venda #{sale.sale_number}</h3>
                             </div>
                           </div>
 
