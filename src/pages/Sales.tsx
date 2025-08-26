@@ -158,7 +158,9 @@ const Sales = () => {
   }
 
   const filteredSales = sales.filter(sale => {
-    const matchesSearch = sale.id
+    const matchesSearch = !searchTerm ||
+      sale.id.toString().includes(searchTerm) ||
+      (sale.sale_number && sale.sale_number.toLowerCase().includes(searchTerm.toLowerCase()))
 
     const matchesPayment = paymentFilter === "all" || sale.payment_method === paymentFilter
 
@@ -237,11 +239,11 @@ const Sales = () => {
 
     const printWindow = window.open("", "_blank")
     const currentTime = new Date()
-    
+
     const getPaymentMethodName = (method: string) => {
       const methods = {
         dinheiro: "Dinheiro",
-        cartao_credito: "Cartão de Crédito", 
+        cartao_credito: "Cartão de Crédito",
         cartao_debito: "Cartão de Débito",
         pix: "PIX"
       }
@@ -290,22 +292,22 @@ const Sales = () => {
 
   const exportSalesPDF = () => {
     const doc = new jsPDF()
-    
+
     // Configurações de cores - mais flat e minimalista
     const primaryColor = [51, 51, 51] // cinza escuro
     const accentColor = [79, 70, 229] // indigo suave
     const textColor = [55, 65, 81] // cinza médio
     const lightGray = [249, 250, 251] // cinza muito claro
     const borderColor = [229, 231, 235] // cinza claro para bordas
-    
+
     // Cabeçalho
     doc.setFontSize(22)
     doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
     doc.text('Relatório de Vendas', 20, 25)
-    
+
     doc.setFontSize(11)
     doc.setTextColor(textColor[0], textColor[1], textColor[2])
-    
+
     // Filtros aplicados
     let filterText = 'Filtros aplicados: '
     if (dateFilter !== 'all') {
@@ -320,43 +322,43 @@ const Sales = () => {
     }
     doc.text(filterText, 20, 35)
     doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}`, 20, 42)
-    
+
     // Linha separadora sutil
     doc.setDrawColor(borderColor[0], borderColor[1], borderColor[2])
     doc.setLineWidth(0.5)
     doc.line(20, 50, 190, 50)
-    
+
     let yPos = 65
-    
+
     // Resumo em caixa
     doc.setFillColor(lightGray[0], lightGray[1], lightGray[2])
     doc.rect(20, yPos - 5, 170, 35, 'F')
     doc.setDrawColor(borderColor[0], borderColor[1], borderColor[2])
     doc.rect(20, yPos - 5, 170, 35, 'S')
-    
+
     doc.setFontSize(14)
     doc.setTextColor(accentColor[0], accentColor[1], accentColor[2])
     doc.text('Resumo Financeiro', 25, yPos + 3)
-    
+
     doc.setFontSize(10)
     doc.setTextColor(textColor[0], textColor[1], textColor[2])
     const totalSales = filteredSales.reduce((sum, sale) => sum + sale.total_amount, 0)
     const totalProfit = filteredSales.reduce((sum, sale) => sum + sale.profit, 0)
     const avgTicket = filteredSales.length > 0 ? totalSales / filteredSales.length : 0
-    
+
     doc.text(`Total de Vendas: ${formatCurrency(totalSales)}`, 25, yPos + 12)
     doc.text(`Lucro Total: ${formatCurrency(totalProfit)}`, 25, yPos + 20)
     doc.text(`Quantidade: ${filteredSales.length} vendas`, 110, yPos + 12)
     doc.text(`Ticket Médio: ${formatCurrency(avgTicket)}`, 110, yPos + 20)
-    
+
     yPos += 45
-    
+
     // Detalhes das vendas
     doc.setFontSize(14)
     doc.setTextColor(accentColor[0], accentColor[1], accentColor[2])
     doc.text('Detalhes das Vendas', 20, yPos)
     yPos += 15
-    
+
     // Processar cada venda com seus itens
     filteredSales.slice(0, 15).forEach((sale, saleIndex) => {
       // Verificar se precisa de nova página
@@ -364,7 +366,7 @@ const Sales = () => {
         doc.addPage()
         yPos = 25
       }
-      
+
       // Background da venda principal
       const isEvenSale = saleIndex % 2 === 0
       if (isEvenSale) {
@@ -372,25 +374,25 @@ const Sales = () => {
       } else {
         doc.setFillColor(253, 253, 253) // cinza muito claro
       }
-      
+
       // Calcular altura necessária para esta venda
       const itemsHeight = sale.sale_items.length * 6
       const totalSaleHeight = 15 + itemsHeight
-      
+
       doc.rect(20, yPos - 3, 170, totalSaleHeight, 'F')
       doc.setDrawColor(borderColor[0], borderColor[1], borderColor[2])
       doc.rect(20, yPos - 3, 170, totalSaleHeight, 'S')
-      
+
       // Cabeçalho da venda
       doc.setFontSize(11)
       doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
-      doc.text(`${sale.id}`, 25, yPos + 3)
-      
+      doc.text(`${sale.sale_number}`, 25, yPos + 3)
+
       doc.setFontSize(9)
       doc.setTextColor(textColor[0], textColor[1], textColor[2])
       doc.text(new Date(sale.created_at).toLocaleDateString('pt-BR'), 120, yPos + 3)
       doc.text(`Total: ${formatCurrency(sale.total_amount)}`, 150, yPos + 3)
-      
+
       // Método de pagamento e lucro
       const paymentLabels = {
         dinheiro: 'Dinheiro',
@@ -400,15 +402,15 @@ const Sales = () => {
       }
       doc.text(`${paymentLabels[sale.payment_method as keyof typeof paymentLabels] || sale.payment_method}`, 25, yPos + 9)
       doc.text(`Lucro: ${formatCurrency(sale.profit)}`, 150, yPos + 9)
-      
+
       yPos += 15
-      
+
       // Detalhes dos produtos - background diferente
       doc.setFillColor(255, 255, 255) // branco para contraste
       doc.rect(25, yPos - 2, 160, itemsHeight + 4, 'F')
       doc.setDrawColor(230, 230, 230)
       doc.rect(25, yPos - 2, 160, itemsHeight + 4, 'S')
-      
+
       // Cabeçalho dos itens
       doc.setFontSize(8)
       doc.setTextColor(100, 100, 100)
@@ -417,12 +419,12 @@ const Sales = () => {
       doc.text('Unit.', 130, yPos + 2)
       doc.text('Total', 155, yPos + 2)
       yPos += 6
-      
+
       // Lista de produtos
       sale.sale_items.forEach((item, itemIndex) => {
         doc.setFontSize(8)
         doc.setTextColor(textColor[0], textColor[1], textColor[2])
-        
+
         const productName = item.products.name
         const truncatedName = productName.length > 25 ? productName.substring(0, 25) + '...' : productName
         doc.text(truncatedName, 30, yPos)
@@ -431,16 +433,16 @@ const Sales = () => {
         doc.text(formatCurrency(item.total_price), 155, yPos)
         yPos += 6
       })
-      
+
       yPos += 8 // Espaçamento entre vendas
     })
-    
+
     // Rodapé minimalista
     doc.setFontSize(8)
     doc.setTextColor(150, 150, 150)
     doc.text('Sistema de Vendas', 20, 285)
     doc.text(`Página 1`, 170, 285)
-    
+
     doc.save(`vendas-detalhadas-${new Date().toISOString().split('T')[0]}.pdf`)
   }
 
@@ -622,7 +624,7 @@ const Sales = () => {
                               <ShoppingCart className="h-5 w-5 text-primary" />
                             </div>
                             <div>
-                              <h3 className="font-semibold">Venda #{sale.id.toString().padStart(6, "0")}</h3>
+                              <h3 className="font-semibold">Venda {sale.sale_number}</h3>
                             </div>
                           </div>
 
@@ -686,7 +688,7 @@ const Sales = () => {
                             <AlertDialogHeader>
                               <AlertDialogTitle>Tem certeza que deseja excluir?</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Esta ação não pode ser desfeita. A venda #{sale.id} será permanentemente excluída do sistema.
+                                Esta ação não pode ser desfeita. A venda {sale.sale_number} será permanentemente excluída do sistema.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -719,7 +721,7 @@ const Sales = () => {
                 ✕
               </button>
 
-              <h2 className="text-xl font-bold mb-4">Detalhes da Venda #{selectedSale.id}</h2>
+              <h2 className="text-xl font-bold mb-4">Detalhes da Venda {selectedSale.sale_number}</h2>
 
               <div className="space-y-2">
                 <p><strong>Data:</strong> {formatDate(selectedSale.created_at)}</p>
