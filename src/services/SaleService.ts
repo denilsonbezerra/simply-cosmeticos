@@ -8,6 +8,7 @@ export class SaleService extends BaseService implements ISaleService {
       .from('sales')
       .select(`
         *,
+        customers (name),
         sale_items (
           quantity,
           unit_price,

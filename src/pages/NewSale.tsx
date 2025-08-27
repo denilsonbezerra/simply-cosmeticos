@@ -34,6 +34,13 @@ interface Product {
   image_url?: string;
 }
 
+interface Customer {
+  id: number;
+  name: string;
+  email?: string;
+  phone?: string;
+}
+
 interface CartItem {
   product: Product;
   quantity: number;
@@ -41,7 +48,9 @@ interface CartItem {
 
 const NewSale = () => {
   const [products, setProducts] = useState<Product[]>([])
+  const [customers, setCustomers] = useState<Customer[]>([])
   const [cart, setCart] = useState<CartItem[]>([])
+  const [selectedCustomer, setSelectedCustomer] = useState<number>()
   const [paymentMethod, setPaymentMethod] = useState<string>("dinheiro")
   const [notes, setNotes] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
@@ -64,18 +73,24 @@ const NewSale = () => {
 
   const loadData = async () => {
     try {
-      const [productsResult] = await Promise.all([
+      const [productsResult, customersResult] = await Promise.all([
         supabase
           .from("products")
           .select("*")
           .eq("active", true)
           .gt("stock_quantity", 0)
+          .order("name"),
+        supabase
+          .from("customers")
+          .select("id, name, email, phone")
           .order("name")
       ])
 
       if (productsResult.error) throw productsResult.error
+      if (customersResult.error) throw customersResult.error
 
       setProducts(productsResult.data || [])
+      setCustomers(customersResult.data || [])
     } catch (error) {
       toast({
         title: "Erro ao carregar dados",
@@ -173,7 +188,8 @@ const NewSale = () => {
           profit: profit,
           payment_method: paymentMethod,
           notes: notes || null,
-          sold_by: user.id
+          customer_id: selectedCustomer || null,
+          sold_by: user.id,
         }])
         .select()
         .single()
@@ -398,6 +414,29 @@ const NewSale = () => {
                   <CardTitle>Detalhes da Venda</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* Customer */}
+                  <div>
+                    <Label htmlFor="customer">Cliente (opcional)</Label>
+                    <Select
+                      value={selectedCustomer ? selectedCustomer.toString() : ""}
+                      onValueChange={(value) =>
+                        setSelectedCustomer(value ? parseInt(value) : undefined)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecionar cliente" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0">Selecionar cliente</SelectItem>
+                        {customers.map((customer) => (
+                          <SelectItem key={customer.id} value={customer.id.toString()}>
+                            {customer.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   {/* Payment Method */}
                   <div>
                     <Label htmlFor="payment">Forma de Pagamento</Label>

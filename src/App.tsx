@@ -10,6 +10,7 @@ import Products from "./pages/Products";
 import ProductForm from "./pages/ProductForm";
 import Sales from "./pages/Sales";
 import NewSale from "./pages/NewSale";
+import Customers from "./pages/Customers";
 import Reports from "./pages/Reports";
 import TraditionalPDV from "./pages/TraditionalPDV";
 import NotFound from "./pages/NotFound";
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/system" element={<TraditionalPDV />} />
           <Route path="/sales" element={<Sales />} />
           <Route path="/sales/new" element={<NewSale />} />
+          <Route path="/customers" element={<Customers />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DollarSign, Package, TrendingUp, ShoppingCart, AlertTriangle, Monitor } from "lucide-react";
+import { DollarSign, Package, Users, TrendingUp, ShoppingCart, AlertTriangle, Monitor } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -10,8 +10,8 @@ import Sidebar from "@/components/layout/Sidebar";
 interface DashboardStats {
   totalSales: number;
   todaySales: number;
-  salesQuantity: number;
   totalProducts: number;
+  totalCustomers: number;
   lowStockProducts: number;
   totalProfit: number;
 }
@@ -20,8 +20,8 @@ const Dashboard = () => {
   const [stats, setStats] = useState<DashboardStats>({
     totalSales: 0,
     todaySales: 0,
-    salesQuantity: 0,
     totalProducts: 0,
+    totalCustomers: 0,
     lowStockProducts: 0,
     totalProfit: 0,
   })
@@ -61,6 +61,11 @@ const Dashboard = () => {
         .select("stock_quantity, min_stock_level")
         .eq("active", true)
 
+      // Get customers count
+      const { data: customersData } = await supabase
+        .from("customers")
+        .select("id")
+
       const totalSales = salesData?.reduce((sum, sale) => sum + Number(sale.total_amount), 0) || 0
       const todaySales = todaySalesData.reduce((sum, sale) => sum + Number(sale.total_amount), 0)
       const totalProfit = salesData?.reduce((sum, sale) => sum + Number(sale.profit), 0) || 0
@@ -71,8 +76,8 @@ const Dashboard = () => {
       setStats({
         totalSales,
         todaySales,
-        salesQuantity: salesData?.length || 0,
         totalProducts: productsData?.length || 0,
+        totalCustomers: customersData?.length || 0,
         lowStockProducts,
         totalProfit,
       })
@@ -165,21 +170,21 @@ const Dashboard = () => {
 
             <Card className="shadow-card  ">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Vendas Realizadas</CardTitle>
-                <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.salesQuantity}</div>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-card  ">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Produtos</CardTitle>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalProducts}</div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-card  ">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Clientes</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalCustomers}</div>
               </CardContent>
             </Card>
 
@@ -202,7 +207,7 @@ const Dashboard = () => {
               <CardTitle>Ações Rápidas</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                 <Button
                   variant="outline"
                   className="h-20 flex-col space-y-2 hover:shadow-soft transition-all"
@@ -228,6 +233,15 @@ const Dashboard = () => {
                 >
                   <Package className="h-6 w-6" />
                   <span>Produtos</span>
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="h-20 flex-col space-y-2 hover:shadow-soft transition-all"
+                  onClick={() => navigate("/customers")}
+                >
+                  <Users className="h-6 w-6" />
+                  <span>Clientes</span>
                 </Button>
 
                 <Button

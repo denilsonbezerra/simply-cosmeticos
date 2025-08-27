@@ -28,6 +28,7 @@ const Sidebar = () => {
     { icon: Monitor, label: "Sistema de Vendas", path: "/system" },
     { icon: ShoppingCart, label: "Vendas", path: "/sales" },
     { icon: Package, label: "Produtos", path: "/products" },
+    { icon: Users, label: "Clientes", path: "/customers" },
     { icon: BarChart3, label: "Relatórios", path: "/reports" },
   ]
 
